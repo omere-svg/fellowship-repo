@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useRef,
   useState,
   type Dispatch,
   type SetStateAction,
@@ -20,8 +21,8 @@ export function useLocalStorage<T>(
   initialValue: T,
   options: UseLocalStorageOptions<T> = {},
 ): UseLocalStorageReturn<T> {
-  const serialize = options.serialize ?? JSON.stringify;
-  const deserialize = options.deserialize ?? JSON.parse;
+  const serializeRef = useRef(options.serialize ?? JSON.stringify);
+  const deserializeRef = useRef(options.deserialize ?? JSON.parse);
 
   const [storedValue, setStoredValue] = useState<T>((): T => {
     try {
@@ -29,7 +30,7 @@ export function useLocalStorage<T>(
       if (raw === null) {
         return initialValue;
       }
-      return deserialize(raw);
+      return deserializeRef.current(raw);
     } catch {
       return initialValue;
     }
@@ -37,11 +38,11 @@ export function useLocalStorage<T>(
 
   useEffect((): void => {
     try {
-      localStorage.setItem(key, serialize(storedValue));
+      localStorage.setItem(key, serializeRef.current(storedValue));
     } catch {
       // Ignore quota or serialization errors.
     }
-  }, [key, storedValue, serialize]);
+  }, [key, storedValue]);
 
   return [storedValue, setStoredValue];
 }
