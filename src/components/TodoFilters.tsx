@@ -9,13 +9,7 @@ type TodoFiltersProps = {
 const FILTERS: Filter[] = ['all', 'active', 'completed'];
 
 function labelFor(filter: Filter): string {
-  if (filter === 'all') {
-    return 'All';
-  }
-  if (filter === 'active') {
-    return 'Active';
-  }
-  return 'Completed';
+  return filter.charAt(0).toUpperCase() + filter.slice(1);
 }
 
 export function TodoFilters({

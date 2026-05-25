@@ -2,8 +2,8 @@ export type TodoId = string;
 
 export type Todo = {
   id: TodoId;
-  text: string;
+  title: string;
   completed: boolean;
 };
 
-export type Filter = 'all' | 'active' | 'completed';
+export type TodoFilterOptions = 'all' | 'active' | 'completed';

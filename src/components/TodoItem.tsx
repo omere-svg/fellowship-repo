@@ -1,4 +1,5 @@
 import {
+  useRef,
   useState,
   type ChangeEvent,
   type KeyboardEvent,
@@ -20,28 +21,37 @@ export function TodoItem({
   onDelete,
 }: TodoItemProps): ReactElement {
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [editText, setEditText] = useState<string>(todo.text);
+  const [editText, setEditText] = useState<string>(todo.title);
+  const didSaveRef = useRef<boolean>(false);
 
   const startEditing = (): void => {
-    setEditText(todo.text);
+    didSaveRef.current = false;
+    setEditText(todo.title);
     setIsEditing(true);
   };
 
   const saveEdit = (): void => {
+    if (didSaveRef.current) {
+      return;
+    }
+  
+    didSaveRef.current = true;
+  
     const trimmed = editText.trim();
     if (trimmed === '') {
       onDelete(todo.id);
     } else {
       onEdit(todo.id, trimmed);
     }
+  
     setIsEditing(false);
   };
-
+  
   const cancelEdit = (): void => {
-    setEditText(todo.text);
+    setEditText(todo.title);
     setIsEditing(false);
   };
-
+  
   const handleEditKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
     if (event.key === 'Enter') {
       saveEdit();
@@ -64,7 +74,7 @@ export function TodoItem({
           onBlur={saveEdit}
           onKeyDown={handleEditKeyDown}
           autoFocus
-          aria-label={`Edit todo: ${todo.text}`}
+          aria-label={`Edit todo: ${todo.title}`}
         />
       </li>
     );
@@ -77,18 +87,18 @@ export function TodoItem({
         type="checkbox"
         checked={todo.completed}
         onChange={(): void => onToggle(todo.id)}
-        aria-label={`Mark "${todo.text}" as ${
+        aria-label={`Mark "${todo.title}" as ${
           todo.completed ? 'incomplete' : 'complete'
         }`}
       />
       <label className="todo-label" onDoubleClick={startEditing}>
-        {todo.text}
+        {todo.title}
       </label>
       <button
         type="button"
         className="todo-edit-btn"
         onClick={startEditing}
-        aria-label={`Edit "${todo.text}"`}
+        aria-label={`Edit "${todo.title}"`}
       >
         Edit
       </button>
@@ -96,7 +106,7 @@ export function TodoItem({
         type="button"
         className="todo-delete"
         onClick={(): void => onDelete(todo.id)}
-        aria-label={`Delete "${todo.text}"`}
+        aria-label={`Delete "${todo.title}"`}
       >
         ×
       </button>

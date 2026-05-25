@@ -7,7 +7,6 @@ export function getFilteredTodos(todos: Todo[], filter: Filter): Todo[] {
     case 'completed':
       return todos.filter((todo: Todo): boolean => todo.completed);
     case 'all':
-    default:
       return todos;
   }
 }
