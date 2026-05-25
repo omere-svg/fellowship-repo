@@ -28,9 +28,6 @@ function parseTodos(raw: string): Todo[] {
   }
 }
 
-function createId(): string {
-  return crypto.randomUUID();
-}
 
 export type UseTodosResult = {
   todos: Todo[];
@@ -51,9 +48,7 @@ export function useTodos(): UseTodosResult {
   });
   const [filter, setFilterState] = useState<Filter>('all');
 
-  const setFilter = useCallback((next: Filter): void => {
-    setFilterState(next);
-  }, []);
+  const setFilter = setFilterState;
 
   const addTodo = useCallback((text: string): void => {
     const trimmed = text.trim();
@@ -61,8 +56,8 @@ export function useTodos(): UseTodosResult {
       return;
     }
     const newTodo: Todo = {
-      id: createId(),
-      text: trimmed,
+      id: crypto.randomUUID(),
+      title: trimmed,
       completed: false,
     };
     setTodos((current: Todo[]): Todo[] => [...current, newTodo]);
